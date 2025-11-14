@@ -1,0 +1,69 @@
+
+<h1>📝 Your Tasks</h1>
+
+<!-- Search -->
+<form method="get">
+    <input type="text" name="query" placeholder="Search..." value="{{ query }}">
+    <button type="submit">Search</button>
+</form>
+
+<!-- Status Filters -->
+<div>
+    <a href="?">All</a> |
+    <a href="?status=pending{% if query %}&query={{ query }}{% endif %}">Pending</a> |
+    <a href="?status=completed{% if query %}&query={{ query }}{% endif %}">Completed</a>
+</div>
+
+<!-- Categories -->
+<h2>Categories</h2>
+<ul>
+    {% for cat in categories %}
+        <li>{{ cat.name }} ({{ cat.task_count }})</li>
+    {% empty %}
+        <li>No categories yet.</li>
+    {% endfor %}
+</ul>
+
+<!-- Tasks List -->
+<h2>Tasks</h2>
+<ul>
+    {% for task in page_obj %}
+        <li
+            style="
+                {% if task.is_upcoming %}color:green;{% endif %}
+                {% if task.is_overdue %}color:red;{% endif %}
+            "
+        >
+            <strong>{{ task.title }}</strong> — {{ task.deadline }}
+
+            {% if task.completed %}
+                ✔ Completed
+            {% else %}
+                ✖ Pending
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No tasks found.</li>
+    {% endfor %}
+</ul>
+
+<!-- Pagination -->
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}
+            {% if filter_status %}&status={{ filter_status }}{% endif %}
+            {% if query %}&query={{ query }}{% endif %}
+        ">Previous</a>
+    {% endif %}
+
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}
+            {% if filter_status %}&status={{ filter_status }}{% endif %}
+            {% if query %}&query={{ query }}{% endif %}
+        ">Next</a>
+    {% endif %}
+</div>
+
+
